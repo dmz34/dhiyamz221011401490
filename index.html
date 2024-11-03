@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manajemen Karyawan</title>
+    <link href="style.css" rel="stylesheet">
+</head>
+<body>
+
+<header>
+    <h1>Manajemen Karyawan</h1>
+</header>
+
+<nav>
+    <button onclick="showSection('dataKaryawan')">Data Karyawan</button>
+    <button onclick="showSection('tambahKaryawan')">Tambah Karyawan</button>
+    <button onclick="showSection('absenMasuk')">Absen Masuk</button>
+</nav>
+
+<div id="content">
+    <div id="dataKaryawan" class="section">
+        <h2>Data Karyawan</h2>
+        <table id="employee-table">
+            <tr>
+                <th>Nama</th>
+                <th>Jabatan</th>
+                <th>Status Absen</th>
+            </tr>
+            <!-- Data karyawan akan ditambahkan di sini -->
+        </table>
+    </div>
+
+    <div id="tambahKaryawan" class="section" style="display: none;">
+        <h2>Tambah Karyawan</h2>
+        <form onsubmit="addEmployee(event)">
+            <label>Nama:</label><br>
+            <input type="text" id="name" required><br><br>
+            <label>Jabatan:</label><br>
+            <input type="text" id="position" required><br><br>
+            <button type="submit">Tambah Karyawan</button>
+        </form>
+    </div>
+
+    <div id="absenMasuk" class="section" style="display: none;">
+        <h2>Absen Masuk</h2>
+        <form onsubmit="markAttendance(event)">
+            <label>Nama:</label><br>
+            <input type="text" id="attendanceName" required><br><br>
+            <button type="submit">Absen Masuk</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    const employees = [];
+
+    function showSection(sectionId) {
+        document.querySelectorAll('.section').forEach(section => section.style.display = 'none');
+        document.getElementById(sectionId).style.display = 'block';
+    }
+
+    function addEmployee(event) {
+        event.preventDefault();
+        const name = document.getElementById('name').value;
+        const position = document.getElementById('position').value;
+
+        employees.push({ name, position, attendance: "Belum Masuk" });
+        document.getElementById('name').value = '';
+        document.getElementById('position').value = '';
+        updateEmployeeTable();
+        alert('Karyawan berhasil ditambahkan');
+        showSection('dataKaryawan');
+    }
+
+    function markAttendance(event) {
+        event.preventDefault();
+        const name = document.getElementById('attendanceName').value;
+        const employee = employees.find(emp => emp.name === name);
+
+        if (employee) {
+            employee.attendance = "Hadir";
+            alert(`${name} berhasil absen masuk.`);
+        } else {
+            alert(`Karyawan dengan nama ${name} tidak ditemukan.`);
+        }
+        
+        document.getElementById('attendanceName').value = '';
+        updateEmployeeTable();
+        showSection('dataKaryawan');
+    }
+
+    function updateEmployeeTable() {
+        const table = document.getElementById('employee-table');
+        table.innerHTML = `
+            <tr>
+                <th>Nama</th>
+                <th>Jabatan</th>
+                <th>Status Absen</th>
+            </tr>`;
+        employees.forEach(emp => {
+            const row = table.insertRow();
+            row.insertCell(0).textContent = emp.name;
+            row.insertCell(1).textContent = emp.position;
+            row.insertCell(2).textContent = emp.attendance;
+        });
+    }
+</script>
+
+</body>
+</html>
